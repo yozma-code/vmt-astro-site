@@ -1,11 +1,32 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { client } from '../../tina/__generated__/client';
+import { TinaMarkdown } from 'tinacms/dist/rich-text';
+import { tinaField } from 'tinacms/dist/react';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+let pageData = null;
+try {
+  const result = await client.queries.pages({ relativePath: 'home.md' });
+  pageData = result.data.pages;
+} catch (e) {
+  console.log("请在后台新建 home.md");
+}
 ---
-
-<Layout>
-	<Welcome />
+<Layout title={pageData?.title || 'VMT 母版站'}>
+  {pageData ? (
+    <div>
+      <div style="background: #f4f4f5; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+        <h1 data-tina-field={tinaField(pageData, 'title')}>{pageData.title}</h1>
+        <p data-tina-field={tinaField(pageData, 'seoDesc')}>{pageData.seoDesc}</p>
+      </div>
+      <div data-tina-field={tinaField(pageData, 'body')}>
+        <TinaMarkdown content={pageData.body} />
+      </div>
+    </div>
+  ) : (
+    <div>
+      <h1>欢迎来到母版站</h1>
+      <p>请去后台创建 <strong>home.md</strong> 并保存，这里就会显示内容。</p>
+    </div>
+  )}
 </Layout>

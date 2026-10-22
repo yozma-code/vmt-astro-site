@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { client } from '../../../tina/__generated__/client';
+import { TinaMarkdown } from 'tinacms/dist/rich-text';
+import { tinaField } from 'tinacms/dist/react';
+
+const { slug } = Astro.params;
+const result = await client.queries.blogs({ relativePath: `${slug}.md` });
+const post = result.data.blogs;
+---
+<Layout title={post.title}>
+  <article>
+    <h1 data-tina-field={tinaField(post, 'title')}>{post.title}</h1>
+    <p style="color: #666;" data-tina-field={tinaField(post, 'seoDesc')}>{post.seoDesc}</p>
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;" />
+    <div data-tina-field={tinaField(post, 'body')}>
+      <TinaMarkdown content={post.body} />
+    </div>
+  </article>
+</Layout>

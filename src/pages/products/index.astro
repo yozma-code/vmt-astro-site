@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { client } from '../../../tina/__generated__/client';
+
+const response = await client.queries.productsConnection();
+const products = response.data.productsConnection.edges || [];
+---
+<Layout title="产品列表">
+  <h1>产品列表</h1>
+  <ul style="line-height: 2;">
+    {products.length === 0 && <p>暂无产品，请去后台新建。</p>}
+    {products.map((product) => (
+      <li>
+        <a href={`/products/${product.node._sys.filename}`}>{product.node.name}</a>
+      </li>
+    ))}
+  </ul>
+</Layout>

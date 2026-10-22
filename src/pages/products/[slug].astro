@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { client } from '../../../tina/__generated__/client';
+import { TinaMarkdown } from 'tinacms/dist/rich-text';
+import { tinaField } from 'tinacms/dist/react';
+
+const { slug } = Astro.params;
+const result = await client.queries.products({ relativePath: `${slug}.md` });
+const product = result.data.products;
+---
+<Layout title={product.name}>
+  <article>
+    <h1 data-tina-field={tinaField(product, 'name')}>{product.name}</h1>
+    <p data-tina-field={tinaField(product, 'price')}>价格/参数: {product.price}</p>
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;" />
+    <div data-tina-field={tinaField(product, 'description')}>
+      <TinaMarkdown content={product.description} />
+    </div>
+  </article>
+</Layout>

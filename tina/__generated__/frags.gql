@@ -1,0 +1,30 @@
+fragment PagesParts on Pages {
+  __typename
+  title
+  seoDesc
+  heroImage
+  body
+}
+
+fragment ProductsParts on Products {
+  __typename
+  name
+  price
+  coverImage
+  description
+}
+
+fragment BlogsParts on Blogs {
+  __typename
+  title
+  seoDesc
+  date
+  coverImage
+  body
+}
+
+fragment GlobalsParts on Globals {
+  __typename
+  siteName
+  contactEmail
+}

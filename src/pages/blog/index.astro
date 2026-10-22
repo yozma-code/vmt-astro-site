@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { client } from '../../../tina/__generated__/client';
+
+const response = await client.queries.blogsConnection();
+const blogs = response.data.blogsConnection.edges || [];
+---
+<Layout title="博客列表">
+  <h1>博客列表</h1>
+  <ul style="line-height: 2;">
+    {blogs.length === 0 && <p>暂无文章，请去后台新建。</p>}
+    {blogs.map((post) => (
+      <li>
+        <a href={`/blog/${post.node._sys.filename}`}>{post.node.title}</a>
+      </li>
+    ))}
+  </ul>
+</Layout>
