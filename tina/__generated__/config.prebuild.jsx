@@ -28,6 +28,7 @@ var config_default = defineConfig({
           { type: "rich-text", name: "body", label: "\u9875\u9762\u6B63\u6587", isBody: true }
         ],
         ui: {
+          // 关键配置：如果文件名是 home，指向根路径 /，否则指向 /文件名
           router: ({ document }) => {
             return document._sys.filename === "home" ? "/" : `/${document._sys.filename}`;
           }
@@ -44,6 +45,7 @@ var config_default = defineConfig({
           { type: "rich-text", name: "description", label: "\u4EA7\u54C1\u4ECB\u7ECD", isBody: true }
         ],
         ui: {
+          // 产品指向 /products/文件名
           router: ({ document }) => `/products/${document._sys.filename}`
         }
       },
@@ -59,6 +61,7 @@ var config_default = defineConfig({
           { type: "rich-text", name: "body", label: "\u6B63\u6587", isBody: true }
         ],
         ui: {
+          // 博客指向 /blog/文件名
           router: ({ document }) => `/blog/${document._sys.filename}`
         }
       },

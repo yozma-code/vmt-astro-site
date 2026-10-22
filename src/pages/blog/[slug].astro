@@ -9,12 +9,24 @@ const result = await client.queries.blogs({ relativePath: `${slug}.md` });
 const post = result.data.blogs;
 ---
 <Layout title={post.title}>
-  <article>
-    <h1 data-tina-field={tinaField(post, 'title')}>{post.title}</h1>
-    <p style="color: #666;" data-tina-field={tinaField(post, 'seoDesc')}>{post.seoDesc}</p>
-    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;" />
-    <div data-tina-field={tinaField(post, 'body')}>
+  <article style="max-width: 800px; margin: 0 auto; line-height: 1.8;">
+    <header style="margin-bottom: 2rem;">
+      <h1 data-tina-field={tinaField(post, 'title')} style="font-size: 2.2rem; color: #111;">{post.title}</h1>
+      <p style="color: #666; font-size: 1.1rem; margin-top: 1rem;" data-tina-field={tinaField(post, 'seoDesc')}>{post.seoDesc}</p>
+      <div style="color: #999; font-size: 0.9rem; margin-top: 0.5rem;">发布时间: {new Date(post.date).toLocaleDateString()}</div>
+      <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #eee;" />
+    </header>
+    <div data-tina-field={tinaField(post, 'body')} class="tina-content">
       <TinaMarkdown content={post.body} />
     </div>
   </article>
 </Layout>
+<style is:global>
+  .tina-content h1, .tina-content h2, .tina-content h3 { color: #222; margin-top: 2rem; margin-bottom: 1rem; }
+  .tina-content p { margin-bottom: 1.2rem; color: #333; }
+  .tina-content ul, .tina-content ol { margin-bottom: 1.2rem; padding-left: 1.5rem; }
+  .tina-content li { margin-bottom: 0.5rem; }
+  .tina-content table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+  .tina-content th, .tina-content td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+  .tina-content th { background-color: #f9f9f9; }
+</style>
