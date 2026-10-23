@@ -1,18 +1,26 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { client } from '../../../tina/__generated__/client';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 
-const response = await client.queries.productsConnection();
-const products = response.data.productsConnection.edges || [];
+const productsDir = path.join(process.cwd(), 'content/products');
+let products = [];
+if (fs.existsSync(productsDir)) {
+  const files = fs.readdirSync(productsDir).filter(f => f.endsWith('.md'));
+  products = files.map(file => {
+    const content = fs.readFileSync(path.join(productsDir, file), 'utf-8');
+    const { data } = matter(content);
+    return { slug: file.replace('.md', ''), name: data.name || '未命名产品' };
+  });
+}
 ---
 <Layout title="产品列表">
   <h1>产品列表</h1>
   <ul style="line-height: 2;">
     {products.length === 0 && <p>暂无产品，请去后台新建。</p>}
     {products.map((product) => (
-      <li>
-        <a href={`/products/${product.node._sys.filename}`}>{product.node.name}</a>
-      </li>
+      <li><a href={`/products/${product.slug}`}>{product.name}</a></li>
     ))}
   </ul>
 </Layout>

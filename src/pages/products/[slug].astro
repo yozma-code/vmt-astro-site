@@ -1,12 +1,26 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { client } from '../../../tina/__generated__/client';
 import { TinaMarkdown } from 'tinacms/dist/rich-text';
 import { tinaField } from 'tinacms/dist/react';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+
+export async function getStaticPaths() {
+  const productsDir = path.join(process.cwd(), 'content/products');
+  if (!fs.existsSync(productsDir)) return [];
+  const files = fs.readdirSync(productsDir);
+  return files.filter(file => file.endsWith('.md')).map((file) => ({
+    params: { slug: file.replace('.md', '') },
+  }));
+}
 
 const { slug } = Astro.params;
-const result = await client.queries.products({ relativePath: `${slug}.md` });
-const product = result.data.products;
+const filePath = path.join(process.cwd(), 'content/products', `${slug}.md`);
+const fileContent = fs.readFileSync(filePath, 'utf-8');
+const { data, content: body } = matter(fileContent);
+
+const product = { name: data.name, price: data.price, description: body };
 ---
 <Layout title={product.name}>
   <article>
@@ -14,7 +28,7 @@ const product = result.data.products;
     <p data-tina-field={tinaField(product, 'price')}>价格/参数: {product.price}</p>
     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;" />
     <div data-tina-field={tinaField(product, 'description')}>
-      <TinaMarkdown content={product.description} />
+      <TinaMarkdown content={body} />
     </div>
   </article>
 </Layout>
