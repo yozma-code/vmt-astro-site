@@ -6,7 +6,7 @@
     "node": ">=22.23.4"
   },
   "scripts": {
-    "dev": "tinacms dev -c \"astro dev\"",
+    "dev": "tinacms dev -c \"astro dev --host\"",
     "build": "tinacms build && astro build",
     "preview": "astro preview",
     "astro": "astro"

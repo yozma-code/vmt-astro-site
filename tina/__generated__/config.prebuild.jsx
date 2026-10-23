@@ -2,6 +2,10 @@
 import { defineConfig } from "tinacms";
 var branch = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || process.env.HEAD || "main";
 var config_default = defineConfig({
+  server: {
+    host: "0.0.0.0",
+    allowedOrigins: ["http://192.168.1.76:4321", "http://localhost:4321"]
+  },
   branch,
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
   token: process.env.TINA_TOKEN,
