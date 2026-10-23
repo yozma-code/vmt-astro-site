@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "tinacms dev -c \"astro dev --host\"",
-    "build": "tinacms build --noTelemetry --local && astro build",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
