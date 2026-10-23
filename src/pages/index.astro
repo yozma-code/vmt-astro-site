@@ -1,15 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { client } from '../../tina/__generated__/client';
 import { TinaMarkdown } from 'tinacms/dist/rich-text';
 import { tinaField } from 'tinacms/dist/react';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 
 let pageData = null;
-try {
-  const result = await client.queries.pages({ relativePath: 'home.md' });
-  pageData = result.data.pages;
-} catch (e) {
-  console.log("请在后台新建 home.md");
+const filePath = path.join(process.cwd(), 'content/pages/home.md');
+if (fs.existsSync(filePath)) {
+  const fileContent = fs.readFileSync(filePath, 'utf-8');
+  const { data, content } = matter(fileContent);
+  pageData = { ...data, body: content };
 }
 ---
 <Layout title={pageData?.title || 'VMT 母版站'}>
@@ -24,9 +26,6 @@ try {
       </div>
     </div>
   ) : (
-    <div>
-      <h1>欢迎来到母版站</h1>
-      <p>请去后台创建 <strong>home.md</strong> 并保存，这里就会显示内容。</p>
-    </div>
+    <div><h1>欢迎来到母版站</h1><p>请去后台创建 home.md 并保存。</p></div>
   )}
 </Layout>

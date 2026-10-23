@@ -1,22 +1,26 @@
 ---
+import Layout from '../../layouts/Layout.astro';
+import { TinaMarkdown } from 'tinacms/dist/rich-text';
+import { tinaField } from 'tinacms/dist/react';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 
 export async function getStaticPaths() {
-  const postsResponse = await client.queries.blogsConnection();
-  const posts = postsResponse.data.blogsConnection.edges || [];
-  
-  return posts.map((post) => ({
-    params: { slug: post.node._sys.filename },
+  const blogsDir = path.join(process.cwd(), 'content/blogs');
+  if (!fs.existsSync(blogsDir)) return [];
+  const files = fs.readdirSync(blogsDir);
+  return files.filter(file => file.endsWith('.md')).map((file) => ({
+    params: { slug: file.replace('.md', '') },
   }));
 }
 
-import Layout from '../../layouts/Layout.astro';
-import { client } from '../../../tina/__generated__/client';
-import { TinaMarkdown } from 'tinacms/dist/rich-text';
-import { tinaField } from 'tinacms/dist/react';
-
 const { slug } = Astro.params;
-const result = await client.queries.blogs({ relativePath: `${slug}.md` });
-const post = result.data.blogs;
+const filePath = path.join(process.cwd(), 'content/blogs', `${slug}.md`);
+const fileContent = fs.readFileSync(filePath, 'utf-8');
+const { data, content: body } = matter(fileContent);
+
+const post = { title: data.title, seoDesc: data.seoDesc, date: data.date, body: body };
 ---
 <Layout title={post.title}>
   <article style="max-width: 800px; margin: 0 auto; line-height: 1.8;">
@@ -27,10 +31,11 @@ const post = result.data.blogs;
       <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #eee;" />
     </header>
     <div data-tina-field={tinaField(post, 'body')} class="tina-content">
-      <TinaMarkdown content={post.body} />
+      <TinaMarkdown content={body} />
     </div>
   </article>
 </Layout>
+
 <style is:global>
   .tina-content h1, .tina-content h2, .tina-content h3 { color: #222; margin-top: 2rem; margin-bottom: 1rem; }
   .tina-content p { margin-bottom: 1.2rem; color: #333; }

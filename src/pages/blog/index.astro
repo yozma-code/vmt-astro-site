@@ -1,18 +1,23 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { client } from '../../../tina/__generated__/client';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 
-const response = await client.queries.blogsConnection();
-const blogs = response.data.blogsConnection.edges || [];
+const blogsDir = path.join(process.cwd(), 'content/blogs');
+const files = fs.readdirSync(blogsDir).filter(f => f.endsWith('.md'));
+const blogs = files.map(file => {
+  const content = fs.readFileSync(path.join(blogsDir, file), 'utf-8');
+  const { data } = matter(content);
+  return { slug: file.replace('.md', ''), title: data.title };
+}).sort((a, b) => b.slug.localeCompare(a.slug));
 ---
 <Layout title="博客列表">
   <h1>博客列表</h1>
   <ul style="line-height: 2;">
     {blogs.length === 0 && <p>暂无文章，请去后台新建。</p>}
     {blogs.map((post) => (
-      <li>
-        <a href={`/blog/${post.node._sys.filename}`}>{post.node.title}</a>
-      </li>
+      <li><a href={`/blog/${post.slug}`}>{post.title}</a></li>
     ))}
   </ul>
 </Layout>
