@@ -1,4 +1,14 @@
 ---
+
+export async function getStaticPaths() {
+  const postsResponse = await client.queries.blogsConnection();
+  const posts = postsResponse.data.blogsConnection.edges || [];
+  
+  return posts.map((post) => ({
+    params: { slug: post.node._sys.filename },
+  }));
+}
+
 import Layout from '../../layouts/Layout.astro';
 import { client } from '../../../tina/__generated__/client';
 import { TinaMarkdown } from 'tinacms/dist/rich-text';
